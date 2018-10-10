@@ -1,6 +1,6 @@
 require_relative "../script"
 
-test_files_names = ["045.somefile.sql", "022nodot.sql", "0002.moredigits.sql", "95.lessdigits.sql"]
+test_files_names = ["045.somefile.sql", "022nodot.sql", "0002.moredigits.sql", "0095.lessdigits.sql"]
 db_status = 44
 
 describe 'newest_file_number' do
@@ -10,6 +10,12 @@ describe 'newest_file_number' do
 end
 describe 'find_files_to_exec' do
   it 'finds the files that need to be executed' do
-    expect(find_files_to_exec(test_files_names, db_status)).to eq ["045.somefile.sql", "95.lessdigits.sql"]
+    expect(find_files_to_exec(test_files_names, db_status)).to eq ["045.somefile.sql", "0095.lessdigits.sql"]
+  end
+end
+describe 'sort_files_in_numerical_order' do
+  it 'puts files in numerical order, lowest first' do
+    sorted_files = ["0002.moredigits.sql", "022nodot.sql", "045.somefile.sql", "0095.lessdigits.sql"]
+    expect(sort_files_in_numerical_order(test_files_names)).to eq sorted_files
   end
 end
