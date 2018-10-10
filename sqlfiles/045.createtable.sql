@@ -1,1 +1,2 @@
 some query
+next query

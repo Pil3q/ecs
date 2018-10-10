@@ -1,5 +1,5 @@
 files_list = Dir.children("sqlfiles")
-db_status = 46
+db_status = 30
 
 def newest_file_number(files_list)
   files_numbers = files_list.map { |file| file.gsub(/[^\d]/, '').to_i  }
@@ -13,5 +13,17 @@ end
 def sort_files_in_numerical_order(files_list)
   files_list.sort_by { |file| file[/\d+/].to_i }
 end
-files_not_in_order = ["088.nksfdls.sql", "001.dszdsd.sql", "0099dsksls.sql", "066sdlsld.sql"]
-p sort_files_in_numerical_order(["045.somefile.sql", "022nodot.sql", "0002.moredigits.sql", "0095.lessdigits.sql"])
+
+def get_queries_from_file(filename)
+  sql = File.open("./sqlfiles/#{filename}", 'rb') { |file| file.read }
+  sql.split("\n")
+end
+
+def get_all_queries(files_list)
+  files_list.map { |file| get_queries_from_file(file) }.flatten
+end
+if newest_file_number(files_list) > db_status
+  to_exec = find_files_to_exec(files_list, db_status)
+  sorted_files = sort_files_in_numerical_order(to_exec)
+  p get_all_queries(sorted_files)
+end
