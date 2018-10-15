@@ -23,4 +23,20 @@ At this point I have selected and sorted files so It is time to open them. I dec
 Now I just needed to execute them against the database which I did with execute_queries function.
 
 At the very end I created update_db_version function which is updating the database version once all statements are executed.
- 
+
+## Assumptions
+I assumed that the sql statements in the files are valid so there is no validation for statements.
+
+I assumed that all the files start with 3 digit number (I used regexp at first to get only numbers from the file name, but then realised that numbers might be common in file names)
+
+Files are in ./sqlfiles folder, I included some simple statements in the directory.
+
+## To be improved
+I was not sure about last part of the exercise
+```
+Your script will be executed automatically via a program, and must satisfy these command line input parameters exactly in order to run:
+  './your-script.your-lang directory-with-sql-scripts username-for-the-db db-host db-name db-password'
+```
+So I stored host username and password as local environmental variables and the program can be executed by just running script.rb
+
+Solution is not fully tested as I was not sure how to automatically test interactions with mySQL database. I tested execution of statements locally on my machine and It seems to be fine but no tests are included.
