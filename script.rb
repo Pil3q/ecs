@@ -1,29 +1,20 @@
+require_relative './db_connection.rb'
+require_relative './file_finder.rb'
+
 files_list = Dir.children("sqlfiles")
-db_status = 30
 
-def newest_file_number(files_list)
-  files_numbers = files_list.map { |file| file.gsub(/[^\d]/, '').to_i  }
-  files_numbers.max
+def daily_update(files_list)
+  newest_file = newest_file_number(files_list)
+  db_version = DatabaseConnection.get_db_version
+  if newest_file > db_version
+    files_to_exec = find_files_to_exec(files_list, db_version)
+    sorted_files = sort_files_in_numerical_order(files_to_exec)
+    queries_to_exec = get_all_queries(sorted_files)
+    DatabaseConnection.execute_queries(queries_to_exec)
+    DatabaseConnection.update_db_version(db_version, newest_file)
+    p "DB was succesfully updated"
+  else
+    p 'DB is up to date'
+  end
 end
-
-def find_files_to_exec(files_list, db_status)
-  files_to_exec = files_list.select { |file| file if file.gsub(/[^\d]/, '').to_i > db_status  }
-end
-
-def sort_files_in_numerical_order(files_list)
-  files_list.sort_by { |file| file[/\d+/].to_i }
-end
-
-def get_queries_from_file(filename)
-  sql = File.open("./sqlfiles/#{filename}", 'rb') { |file| file.read }
-  sql.split("\n")
-end
-
-def get_all_queries(files_list)
-  files_list.map { |file| get_queries_from_file(file) }.flatten
-end
-if newest_file_number(files_list) > db_status
-  to_exec = find_files_to_exec(files_list, db_status)
-  sorted_files = sort_files_in_numerical_order(to_exec)
-  p get_all_queries(sorted_files)
-end
+daily_update(files_list)
